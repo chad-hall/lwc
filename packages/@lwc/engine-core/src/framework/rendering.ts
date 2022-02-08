@@ -68,6 +68,7 @@ import { patchStyleAttribute } from './modules/computed-style-attr';
 import { applyEventListeners } from './modules/events';
 import { applyStaticClassAttribute } from './modules/static-class-attr';
 import { applyStaticStyleAttribute } from './modules/static-style-attr';
+import { LightningElement } from './main';
 
 export const TextHook: Hooks<VText> = {
     create: (vnode) => {
@@ -146,8 +147,14 @@ export const CustomElementHook: Hooks<VCustomElement> = {
          */
         let vm: VM | undefined;
         const elm = new UpgradableConstructor((elm: HTMLElement) => {
-            // the custom element from the registry is expecting an upgrade callback
-            vm = createViewModelHook(elm, vnode);
+            //console.log(elm, elm.tagName, vnode);
+
+            if (vnode.ctor.prototype instanceof LightningElement) {
+                // the custom element from the registry is expecting an upgrade callback
+                vm = createViewModelHook(elm, vnode);
+            } else {
+                vm = elm as any;
+            }
         });
 
         linkNodeToShadow(elm, owner);
