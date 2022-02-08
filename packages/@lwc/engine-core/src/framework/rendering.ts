@@ -138,6 +138,12 @@ export const ElementHook: Hooks<VElement> = {
 export const CustomElementHook: Hooks<VCustomElement> = {
     create: (vnode) => {
         const { sel, owner } = vnode;
+        if (!(vnode.ctor.prototype instanceof LightningElement)) {
+            customElements.define('my-vue', vnode.ctor);
+
+            vnode.elm = new vnode.ctor();
+            return;
+        }
         const UpgradableConstructor = getUpgradableConstructor(sel);
         /**
          * Note: if the upgradable constructor does not expect, or throw when we new it
@@ -152,8 +158,6 @@ export const CustomElementHook: Hooks<VCustomElement> = {
             if (vnode.ctor.prototype instanceof LightningElement) {
                 // the custom element from the registry is expecting an upgrade callback
                 vm = createViewModelHook(elm, vnode);
-            } else {
-                vm = elm as any;
             }
         });
 
