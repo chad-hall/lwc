@@ -139,8 +139,6 @@ export const CustomElementHook: Hooks<VCustomElement> = {
     create: (vnode) => {
         const { sel, owner } = vnode;
         if (!(vnode.ctor.prototype instanceof LightningElement)) {
-            customElements.define(vnode.sel, vnode.ctor);
-
             vnode.elm = new vnode.ctor();
             return;
         }
