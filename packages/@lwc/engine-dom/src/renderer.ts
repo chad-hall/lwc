@@ -205,18 +205,19 @@ export function getProperty(node: Node, key: string): any {
 }
 
 export function setProperty(node: Node, key: string, value: any): void {
-    if (process.env.NODE_ENV !== 'production') {
-        if (node instanceof Element && !(key in node)) {
-            // TODO [#1297]: Move this validation to the compiler
-            assert.fail(
-                `Unknown public property "${key}" of element <${
-                    node.tagName
-                }>. This is likely a typo on the corresponding attribute "${htmlPropertyToAttribute(
-                    key
-                )}".`
-            );
-        }
-    }
+    htmlPropertyToAttribute(key);
+    // if (process.env.NODE_ENV !== 'production') {
+    //     // if (!(key in node)) {
+    //     //     // TODO [#1297]: Move this validation to the compiler
+    //     //     assert.fail(
+    //     //         `Unknown public property "${key}" of element <${
+    //     //             node.tagName
+    //     //         }>. This is likely a typo on the corresponding attribute "${htmlPropertyToAttribute(
+    //     //             key
+    //     //         )}".`
+    //     //     );
+    //     // }
+    // }
 
     (node as any)[key] = value;
 }

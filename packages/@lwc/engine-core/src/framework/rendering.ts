@@ -140,6 +140,7 @@ export const CustomElementHook: Hooks<VCustomElement> = {
         const { sel, owner } = vnode;
         if (!(vnode.ctor.prototype instanceof LightningElement)) {
             vnode.elm = new vnode.ctor();
+            patchElementPropsAndAttrs(null, vnode);
             return;
         }
         const UpgradableConstructor = getUpgradableConstructor(sel);
