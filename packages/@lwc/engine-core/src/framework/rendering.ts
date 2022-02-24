@@ -68,7 +68,7 @@ import { patchStyleAttribute } from './modules/computed-style-attr';
 import { applyEventListeners } from './modules/events';
 import { applyStaticClassAttribute } from './modules/static-class-attr';
 import { applyStaticStyleAttribute } from './modules/static-style-attr';
-import { LightningElement } from './main';
+import { isComponentConstructor } from './main';
 
 export const TextHook: Hooks<VText> = {
     create: (vnode) => {
@@ -138,7 +138,7 @@ export const ElementHook: Hooks<VElement> = {
 export const CustomElementHook: Hooks<VCustomElement> = {
     create: (vnode) => {
         const { sel, owner } = vnode;
-        if (!(vnode.ctor.prototype instanceof LightningElement)) {
+        if (!isComponentConstructor(vnode.ctor)) {
             vnode.elm = new vnode.ctor();
             patchElementPropsAndAttrs(null, vnode);
             return;
@@ -154,7 +154,7 @@ export const CustomElementHook: Hooks<VCustomElement> = {
         const elm = new UpgradableConstructor((elm: HTMLElement) => {
             //console.log(elm, elm.tagName, vnode);
 
-            if (vnode.ctor.prototype instanceof LightningElement) {
+            if (isComponentConstructor(vnode.ctor)) {
                 // the custom element from the registry is expecting an upgrade callback
                 vm = createViewModelHook(elm, vnode);
             }
@@ -165,8 +165,6 @@ export const CustomElementHook: Hooks<VCustomElement> = {
 
         if (vm) {
             allocateChildren(vnode, vm);
-        } else if (vnode.ctor !== UpgradableConstructor) {
-            throw new TypeError(`Incorrect Component Constructor`);
         }
         patchElementPropsAndAttrs(null, vnode);
     },

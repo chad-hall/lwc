@@ -83,13 +83,13 @@ function h(sel: string, data: VElementData, children: VNodes): VElement {
         }
         forEach.call(children, (childVnode: VNode | null | undefined) => {
             if (childVnode != null) {
-                assert.isTrue(
-                    'type' in childVnode &&
-                        'sel' in childVnode &&
-                        'elm' in childVnode &&
-                        'key' in childVnode,
-                    `${childVnode} is not a vnode.`
-                );
+                // assert.isTrue(
+                //     'type' in childVnode &&
+                //         'sel' in childVnode &&
+                //         'elm' in childVnode &&
+                //         'key' in childVnode,
+                //     `${childVnode} is not a vnode.`
+                // );
             }
         });
     }
@@ -196,13 +196,13 @@ function c(
         if (arguments.length === 4) {
             forEach.call(children, (childVnode: VNode | null | undefined) => {
                 if (childVnode != null) {
-                    assert.isTrue(
-                        'type' in childVnode &&
-                            'sel' in childVnode &&
-                            'elm' in childVnode &&
-                            'key' in childVnode,
-                        `${childVnode} is not a vnode.`
-                    );
+                    // assert.isTrue(
+                    //     'type' in childVnode &&
+                    //         'sel' in childVnode &&
+                    //         'elm' in childVnode &&
+                    //         'key' in childVnode,
+                    //     `${childVnode} is not a vnode.`
+                    // );
                 }
             });
         }

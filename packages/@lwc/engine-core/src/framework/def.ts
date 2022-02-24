@@ -21,6 +21,7 @@ import {
     freeze,
     getPrototypeOf,
     htmlPropertyToAttribute,
+    isFunction,
     //isFunction,
     isNull,
     isUndefined,
@@ -93,7 +94,7 @@ function getCtorProto(Ctor: LightningElementConstructor): LightningElementConstr
 }
 
 function createComponentDef(Ctor: LightningElementConstructor): ComponentDef | undefined {
-    if (!(Ctor.prototype instanceof LightningElement)) {
+    if (!isComponentConstructor(Ctor as any)) {
         const {
             name,
             wire,
@@ -227,41 +228,39 @@ function createComponentDef(Ctor: LightningElementConstructor): ComponentDef | u
  * subject to change or being removed.
  */
 export function isComponentConstructor(ctor: unknown): ctor is LightningElementConstructor {
-    return true;
+    if (!isFunction(ctor)) {
+        return false;
+    }
 
-    // if (!isFunction(ctor)) {
-    //     return false;
-    // }
-    //
-    // // Fast path: LightningElement is part of the prototype chain of the constructor.
-    // if (ctor.prototype instanceof LightningElement) {
-    //     return true;
-    // }
-    //
-    // // Slow path: LightningElement is not part of the prototype chain of the constructor, we need
-    // // climb up the constructor prototype chain to check in case there are circular dependencies
-    // // to resolve.
-    // let current = ctor;
-    // do {
-    //     if (isCircularModuleDependency(current)) {
-    //         const circularResolved = resolveCircularModuleDependency(current);
-    //
-    //         // If the circular function returns itself, that's the signal that we have hit the end
-    //         // of the proto chain, which must always be a valid base constructor.
-    //         if (circularResolved === current) {
-    //             return true;
-    //         }
-    //
-    //         current = circularResolved;
-    //     }
-    //
-    //     if (current === LightningElement) {
-    //         return true;
-    //     }
-    // } while (!isNull(current) && (current = getPrototypeOf(current)));
-    //
-    // // Finally return false if the LightningElement is not part of the prototype chain.
-    // return false;
+    // Fast path: LightningElement is part of the prototype chain of the constructor.
+    if (ctor.prototype instanceof LightningElement) {
+        return true;
+    }
+
+    // Slow path: LightningElement is not part of the prototype chain of the constructor, we need
+    // climb up the constructor prototype chain to check in case there are circular dependencies
+    // to resolve.
+    let current = ctor;
+    do {
+        if (isCircularModuleDependency(current)) {
+            const circularResolved = resolveCircularModuleDependency(current);
+
+            // If the circular function returns itself, that's the signal that we have hit the end
+            // of the proto chain, which must always be a valid base constructor.
+            if (circularResolved === current) {
+                return true;
+            }
+
+            current = circularResolved;
+        }
+
+        if (current === LightningElement) {
+            return true;
+        }
+    } while (!isNull(current) && (current = getPrototypeOf(current)));
+
+    // Finally return false if the LightningElement is not part of the prototype chain.
+    return false;
 }
 
 export function getComponentInternalDef(Ctor: unknown): ComponentDef {
